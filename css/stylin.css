@@ -1,0 +1,104 @@
+/* basic elements */
+html {
+    display: block;
+    text-align:center;
+}
+body {
+	line-height: 1.88889;
+	color: #555753;
+	padding: 0;
+    margin:40px;
+    min-width:500px;
+	}
+p {
+	text-align: justify;
+    min-width:400px;
+	}
+h1, h2, h3, h4, h5, h6 {
+    color: #000;
+    font-style: normal;
+    font-weight: 500;
+    text-align:center;
+    min-width:400px;
+}
+h1 {
+    font-family: din-condensed, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 45px;
+    margin-bottom: 11px;
+    text-transform: uppercase;
+}
+h2 {
+    font-family: din-condensed, sans-serif;
+    margin-top: 1.5em;
+    font-size: 30px;
+    /*line-height: 30px;*/
+    margin-bottom: 3px;
+    text-align:left;
+}
+svg {
+    /* TODO: FIND A WAY FOR THE SVG TO FLOAT HORIZONTALLY IN THE WINDOW FRAME
+    WHEN BEING RESIZED */
+}
+/*specific html & text elements*/
+.meta {
+    margin-bottom: 20px;
+    margin: 0 0 10px 0;
+    color: #444;
+    line-height: 1.5em;
+    font-size: .7em;
+    font-style: normal;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+.body_text {
+    margin:auto;
+    min-width:400px;
+    width: 60%;
+    padding: 10px;
+}
+
+/*graphing elements*/
+#timeseries{
+  /*background-color: #e5e5e5;*/
+}
+#graph_title{
+    font-family: din-condensed, sans-serif;
+    display:block;
+    margin-top: 1.5em;
+    font-size: 30px;
+    line-height: 24px;
+    margin-bottom: 3px;
+}
+#graph_title p{
+    margin:auto;
+    width: 60%;
+    text-align:center;
+}
+.pt {
+  fill: #57bec1; /* teal blue */
+  stroke: #ffffff; /* white outline helps discern overlaps better */
+}
+.hover{
+    fill: #57bec1; /* teal blue */
+    stroke: #000000; /* white outline helps discern overlaps better */
+}
+
+/*styling for rect and text elements appended to tooltip group*/
+.tooltip rect {
+    position: absolute;
+    text-align: center;
+    padding: 2px;
+    /*font: 12px sans-serif;*/
+    fill: #4d9b9e;
+    border: 0px;
+    rx: 8px;
+    ry: 8px;
+    pointer-events: none;
+}
+.tooltip text {
+    fill: white;
+    text-anchor:middle;
+}

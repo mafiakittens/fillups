@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Celia's Toyota Corolla fill ups</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"  type="text/css" media="screen">
+    <link rel="stylesheet" href="css/stylin.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="https://use.typekit.net/xrt3cra.css">
+  </head>
+  <body>
+    <h1>Tracking gas station visits</h1>
+    <div class="meta">BY CELIA LUDWINSKI  /  W209 SECTION 3  /  SPRING 2018  /  MIDS, UC BERKELEY</div>
+    <div class="body_text">
+        <h2>Gas station visits</h2>
+        <p>Each point on the following graph depics a gas purchase at a gas
+            station for a particular Toyota Corolla since the car's purchase.
+            The overall trend shows approximately a fairly consistent usage of
+            the car for driving distance (see the generally linear
+            relationship) with some interesting deviations e.g. more driving
+            through 2013 and a dip in driving distance from 2014 into the
+            beginning of 2015.</p></div>
+    <div class="graph_text" id="graph_title"><p>Odometer readings at the time
+        of each gas station visit</p></div>
+    <svg id="timeseries"></svg>
+    <div class="body_text">
+        <h2>Data source</h2>
+        <p>When her car was purchased in April 2012, Celia implemented a
+            system for tracking the gas station visits. Every visit was
+            documented in a hand-written notebook in the glovebox with
+            four data points: date, odometer reading, current gas cost in
+            usd per gallons, and the number of gallons purchased. This data was
+            digitally transcribed on Jan 26, 2018.</p></div>
+
+    <!-- page content -->
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/d3.v4.js"></script>
+    <script src="js/timeseries.js"></script>
+  </body>
+</html>
