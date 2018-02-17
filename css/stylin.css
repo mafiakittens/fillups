@@ -85,6 +85,9 @@ svg {
     fill: #57bec1; /* teal blue */
     stroke: #000000; /* white outline helps discern overlaps better */
 }
+.axisLabel{
+    font-size:14;
+}
 
 /*styling for rect and text elements appended to tooltip group*/
 .tooltip rect {
@@ -101,4 +104,17 @@ svg {
 .tooltip text {
     fill: white;
     text-anchor:middle;
+}
+
+.button {
+    width:150px;
+    background-color: #57bec1; /* teal blue */
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    margin: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
 }

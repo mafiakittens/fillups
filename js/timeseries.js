@@ -10,7 +10,10 @@ $(function() {
         var graph_margin = {"top": 40, "right": 40, "bottom": 40, "left": 60};
         var graph_width = 800 - graph_margin.left - graph_margin.right;
         var height = 400 - graph_margin.top - graph_margin.bottom;
-        var axisUpdate;
+        var axis_names = ["Odometer reading", "Price (dollars per gallon)",
+            "Number of gallons purchased", "Miles traveled since prev filling"]
+        var button_names = ["Odometer", "Price", "Gallons", "Miles Traveled"]
+        var axisUpdate, updatePoints, setTimeScale;
 
         // resize & place the svg for the time series graph
         var timeseriesSVG = d3.select("#timeseries");
@@ -55,17 +58,16 @@ $(function() {
         // update sizing & scaling based on window size
         window.onresize = window.onload = function() {
             var that = this;
-            // console.log(that);
             var page_width = that.innerWidth*0.8;
             var min_width = 600;
             if(page_width >min_width) {
                 graph_width = page_width - graph_margin.left - graph_margin.right; }
             else {
                 graph_width = min_width - graph_margin.left - graph_margin.right; }
-            graphAreaSize();
-            scale();
-            axisUpdate();
-            graphingArea.select('.x.axis').call(xAxis)
+            graphAreaSize();   // update graphing area size based on window size
+            updateXScale();    // update variable scaling based on window size
+            updateXAxis();     // update bottom axis based on window size
+            updatePoints();    // update point location based on window size
         }
 
         var graphAreaSize = function() {
@@ -73,21 +75,11 @@ $(function() {
                             graph_width + graph_margin.left + graph_margin.right)
                          .attr("height",
                             height + graph_margin.top + graph_margin.bottom);
-            console.log(graph_width)
             graphingArea.attr("width",graph_width)
                 .attr("height",height);
             graphBackground.attr("width",graph_width)
                 .attr("height",height);
-            // TODO: make tooltip resize dynamically
-            var tooltip_height = 30, // in px
-                tooltip_width = tooltip_height * 2; // in px
-            var tooltip_text_size = tooltip_height/3; // in px
         }
-
-
-        var tooltip_height = 30, // in px
-            tooltip_width = tooltip_height * 2; // in px
-        var tooltip_text_size = tooltip_height/3; // in px
 
         var data = [];
         var assignData = function(_) {
@@ -97,60 +89,88 @@ $(function() {
             return that;
         }
 
-        var ODO_scale, gallons_scale, cost_scale, mile_diff_scale, timeScale;
-        var scale = function() {
-            // y axes scale options
-            // TODO: encapsulate three graphing views as single object/class
-            // (scales, axes label names, what variable to call within d)
-            ODO_scale = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d,i) {
-                    return +d.ODO;              })  ])
-                .range([height, 0]);
-            gallons_scale = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d,i) {
-                    return +d.gallons;          })   ])
-                .range([height,0]);
-            cost_scale = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d,i) {
-                    return +d.dollars_per_gal;  })   ])
-                .range([height,0]);
-            mile_diff_scale = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d,i) {
-                    return +d.odo_diff;         })  ])
-                .range([height,0]);
+        var timeScale, current_y_scale, current_y_scale_name;
+        var updateXScale = function() {
             timeScale = d3.scaleTime()
-                // .domain([mindate,maxdate])
                 .range([0, graph_width]);
-                // console.log(graph_width)
+        }
+
+
+        // y axis scale options
+        var updateYScale = function(num) {
+            current_y_scale = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d,i) {
+                    return +d[data.columns[num]];
+                })  ])
+                .range([height, 0]);
+            current_y_scale_name = axis_names[num-1];
         };
-        // scale();
+        var buttons = function(){
+            // change button colors on click
+            var onClickButtonColoring = function(me) {
+                // indicate which buttons haven't been selected
+                d3.selectAll(".button").style("background-color", "#aaaaaa")
+                // indicate which button has been selected
+                d3.select(me).style("background-color", "#57bec1");
+            }
+            // update data plotted based on which button is clicked
+            d3.select("#data1")
+                .html(button_names[0])
+                .on("click", function() {           // when button #1 is clicked
+                    plot(1);                        // plot column 1 data from csv
+                    onClickButtonColoring(this);    // change button colors
+                })
+            d3.select("#data2")
+                .html(button_names[1])
+                .on("click", function() {
+                    plot(2);                        // plot column 2 data from csv
+                    onClickButtonColoring(this);    // change button colors
+                })
+            d3.select("#data3")
+                .html(button_names[2])
+                .on("click", function() {
+                    plot(3)                         // plot column 3 data from csv
+                    onClickButtonColoring(this);    // change button colors
+                })
+            d3.select("#data4")
+                .html(button_names[3])
+                .on("click", function() {
+                    plot(4);                        // plot column 4 data from csv
+                    onClickButtonColoring(this);    // change button colors
+                })
+        }
+        buttons();
 
         var plot = function(num) {
-            // initialize the graphing area
-            graphAreaSize();
-            scale();
 
             // set up the x axis scale as a time scale
             // NOTE: requires that the json array be sorted chronologically by date
             var dateFormatter = function(date) {
-                return d3.timeParse("%m-%d-%y")(date);
+                return d3.timeParse("%m-%d-%y")(date); }
+            setTimeScale = function(d) {
+                var mindate = dateFormatter(d[0][d.columns[0]]),
+                    maxdate = dateFormatter(d[d.length-1][d.columns[0]]);
+                timeScale.domain([mindate, maxdate])
             }
-            var mindate = dateFormatter(data[0][data.columns[0]]),
-                maxdate = dateFormatter(data[data.length-1][data.columns[0]]);
-            timeScale.domain([mindate, maxdate])
+
+            // initialize the graphing area
+            graphAreaSize();
+            updateXScale();
+            updateYScale(num);
+            setTimeScale(data);
 
             // Specify which graph you're graphing with these variables
-            var y_data = function() {
-                console.log(data.Date);
-                return data.Date; } // don't format; want short version in tooltip?
-            var x_data = function(data) { return data.odo_diff;  }
-            var current_y_scale = mile_diff_scale;
-            var current_y_scale_name = "Number miles driven since previous filling";
+            var y_data = function() { return data.Date; } // don't format b/c want short version in tooltip
+            var x_data = function(data) {
+                return data[data.columns[num]];
+                // return data.odo_diff;
+              }
+
             var translate = function(d,i,x,y) {
-                var y_val = current_y_scale(d[data.columns[4]]);
+                var y_val = current_y_scale(d[data.columns[num]]);
                 var transform  = "translate(" + (  timeScale(dateFormatter(d.Date)) + x )
                     + ","
-                    + (  current_y_scale(d[data.columns[4]])  + y )
+                    + (  current_y_scale(d[data.columns[num]])  + y )
                     + ")";
                 if(isNaN(y_val)){ // check for NAN values
                     // transform y value by the delta y value only
@@ -161,7 +181,7 @@ $(function() {
             }
 
             //TODO: create function that WONT graph a point if it's an n/a value
-            // create points on the graph
+            // ENTER FUNCTION to create points on the graph
             var points = graphingArea.selectAll("path.pt")
                 .data(data)
                 .enter()
@@ -196,41 +216,69 @@ $(function() {
                     // TODO: FIGURE OUT HOW TO UN-HIGHLIGHT THE HOVER POINT
                 })
 
+            // UPDATE FUNCTION to move points on graph
+            updatePoints = function() {
+                setTimeScale(data);
+                var selection = graphingArea.selectAll("path.pt")
+                    .data(data)
+                    .attr("transform", function(d,i) {
+                        return translate(d,i,0,0); })
+            }
+            updatePoints();
+
             // TODO: add a trend line to the graph.
 
 
-            axisUpdate = function () {
+            // label the x axis at the bottom of the figure
+            var xAxis = d3.axisBottom(timeScale);
+            graphingArea.append("g")
+                  .attr("class", "x axis")
+                  .attr("transform", "translate(0," + height + ")")
+
+            // label the y axis at the left of the figure
+            var yAxis = d3.axisLeft(current_y_scale);
+            graphingArea.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(0,0)")
+
+            // now add titles to the axes
+            timeseriesSVG.append("text")
+                .attr("id", "xAxisLabel")
+                .attr("class", "axisLabel")
+                .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+
+            timeseriesSVG.append("text")
+                .attr("id", "yAxisLabel")
+                .attr("class", "axisLabel")
+                .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+
+
+            // function to be primarily used when window width is resized
+            updateXAxis = function () {
                 // label the x axis at the bottom of the figure
                 var xAxis = d3.axisBottom(timeScale);
-                graphingArea.append("g")
-                      .attr("class", "x axis")
-                      .attr("transform", "translate(0," + height + ")")
-                      .call(xAxis);
-                // console.log("x-axis run");
-
-                // label the y axis at the left of the figure
-                var yAxis = d3.axisLeft(current_y_scale);
-                graphingArea.append("g")
-                    .attr("class", "y axis")
-                    .attr("transform", "translate(0,0)")
-                    .call(yAxis);
-
-                // now add titles to the axes
-                timeseriesSVG.append("text")
-                    .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+                graphingArea.select('.x.axis').call(xAxis);
+                timeseriesSVG.select("#xAxisLabel")
                     .attr("transform", "translate("
                         + (graph_width/2 + graph_margin.left) +","
                         + (height + graph_margin.top + 3*graph_margin.bottom/4)+")")  // centre below axis
                     .text("Date");
-                timeseriesSVG.append("text")
-                    .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+                // move the axis title aat the bottom of the graph
+            }
+            // function to be used when adjusting data plotted
+            updateYAxis = function () {
+                // label the y axis at the bottom of the figure
+                var yAxis = d3.axisLeft(current_y_scale);
+                graphingArea.select('.y.axis').call(yAxis);
+                timeseriesSVG.select("#yAxisLabel")
                     .attr("transform", "translate("
                         + 12+ "," // TODO: THIS SIZE SHOULD BE DYNAMICALLY CHOSEN BASED ON TEXT SIZE OF THIS ELEMENT
                         + (height/2 + graph_margin.top)+")rotate(-90)")
                         // text is drawn off the screen top left, move down and out and rotate
                     .text(current_y_scale_name);
             }
-            axisUpdate();
+            updateXAxis();
+            updateYAxis();
         };
         // public accessor functions to customize the scatter plot
         var public = {
@@ -244,7 +292,6 @@ $(function() {
     }
 
     d3.csv("data/2012_Toyota_Corolla_Celia.csv", function(error, d) {
-        var num = 1;
 
         // TODO: cycle through d to remove any NaN/error values
         // var odo_reading = d.map(function(a) {return a.ODO;});
