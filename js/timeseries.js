@@ -5,8 +5,6 @@ $(function() {
 
     my_viz_lib.scatterPlot = function() {
         // Set up the scales, padding, and buffer ratios
-        // TODO: dynamically resize page and graph based on window size
-        // var page_margin = {"top": 40, "right": 100, "bottom": 40, "left": 100};
         var graph_margin = {"top": 40, "right": 40, "bottom": 40, "left": 60};
         var graph_width = 800 - graph_margin.left - graph_margin.right;
         var height = 400 - graph_margin.top - graph_margin.bottom;
@@ -95,7 +93,6 @@ $(function() {
                 .range([0, graph_width]);
         }
 
-
         // y axis scale options
         var updateYScale = function(num) {
             current_y_scale = d3.scaleLinear()
@@ -160,10 +157,9 @@ $(function() {
             setTimeScale(data);
 
             // Specify which graph you're graphing with these variables
-            var y_data = function() { return data.Date; } // don't format b/c want short version in tooltip
+            var y_data = function(data) { return data.Date; } // don't format b/c want short version in tooltip
             var x_data = function(data) {
-                return data[data.columns[num]];
-                // return data.odo_diff;
+                return data[data.keys[num]];
               }
 
             var translate = function(d,i,x,y) {
@@ -195,6 +191,7 @@ $(function() {
 
                 // add details with hover effects
                 .on("mouseover", function(d) {
+                    // move tooltip to locate over current hovered point
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .7)
@@ -202,14 +199,17 @@ $(function() {
                             ((-1)*tooltip_width/2), // half tooltip width
                             (-1.2) * tooltip_height // move above mouse
                         ));
-                    d3.select(this).attr("class", "hover");
 
-                    // append two text lines: one for date and one for
-                    // associated y data value
+                    // reset style of previously highlighted point
+                    d3.selectAll("path").attr("id", null)
+                    // set style to highight this point
+                    d3.select(this).attr("id", "hover");
+
+                    // two text lines: one for date and one for data value
                     tooltip.select("#tip1")
-                        .html(y_data(d));
+                        .html(d[data.columns[0]]);
                     tooltip.select("#tip2")
-                        .html(x_data(d));
+                        .html(d[data.columns[num]]);
                 })
                 .on("mousout", function(d) {
                     d3.select(this).attr("class","pt");
@@ -225,6 +225,15 @@ $(function() {
                         return translate(d,i,0,0); })
             }
             updatePoints();
+
+            // EXIT FUNCTION to remove points on graph
+            exitfxn = function() {
+                graphingArea.selectAll("path.pt")
+                    .data(data)
+                    .exit()
+                    .remove();
+            }
+            exitfxn();
 
             // TODO: add a trend line to the graph.
 
@@ -245,13 +254,11 @@ $(function() {
             timeseriesSVG.append("text")
                 .attr("id", "xAxisLabel")
                 .attr("class", "axisLabel")
-                .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-
+                .attr("text-anchor", "middle")  // centers the text
             timeseriesSVG.append("text")
                 .attr("id", "yAxisLabel")
                 .attr("class", "axisLabel")
-                .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-
+                .attr("text-anchor", "middle")  // centers the text
 
             // function to be primarily used when window width is resized
             updateXAxis = function () {
@@ -284,9 +291,6 @@ $(function() {
         var public = {
             "plot": plot,
             "assignData": assignData
-            //   "loglog": setLogScale,
-            //   "width": w_,
-            //   "height": h_
         };
         return public;
     }
