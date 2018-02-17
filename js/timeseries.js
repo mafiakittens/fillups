@@ -64,8 +64,21 @@ $(function() {
                 graph_width = min_width - graph_margin.left - graph_margin.right; }
             graphAreaSize();
             scale();
-            axisUpdate();
-            graphingArea.select('.x.axis').call(xAxis)
+            // JOHN: This is your first problem, you shouldn't call axisUpdate on the resize callback
+            // because that function *appends* the axis again, you need to update it, not create it again.
+            // Separate the append part (as you have for everything else on line 32+) from the updating
+            // part
+            // axisUpdate();
+
+            // JOHN: second problem, you need to update your xAxis object, that was done on axisUpdate,
+            // but that function also appended another axis, so separate that code
+            xAxis = d3.axisBottom(timeScale);
+            graphingArea.select('.x.axis').call();
+
+            // JOHN: Your third problem is that you need to update all your dots positions. The 
+            // cleanest way to achieve that for me is to have an update function that handle 
+            // all the enter, update, and exit cases. Your plot only handled enter
+
         }
 
         var graphAreaSize = function() {
@@ -160,6 +173,7 @@ $(function() {
                 return transform;
             }
 
+            // JOHN: error, you are only handling enter, not update or exit
             //TODO: create function that WONT graph a point if it's an n/a value
             // create points on the graph
             var points = graphingArea.selectAll("path.pt")
