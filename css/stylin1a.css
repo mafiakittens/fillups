@@ -8,43 +8,30 @@ body {
 	color: #555753;
 	padding: 0;
     margin:40px;
-    min-width:500px;
 	}
 p {
 	text-align: justify;
-    min-width:400px;
 	}
 h1, h2, h3, h4, h5, h6 {
     color: #000;
     font-style: normal;
     font-weight: 500;
     text-align:center;
-    min-width:400px;
 }
 h1 {
-    font-family: din-condensed, sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 48px;
+    font-size: 40px;
     line-height: 45px;
     margin-bottom: 11px;
-    text-transform: uppercase;
 }
 h2 {
-    font-family: din-condensed, sans-serif;
     margin-top: 1.5em;
-    font-size: 30px;
-    /*line-height: 30px;*/
+    font-size: 19px;
+    line-height: 24px;
     margin-bottom: 3px;
     text-align:left;
 }
-#graph_title.datatype {
 
-}
-svg {
-    /* TODO: FIND A WAY FOR THE SVG TO FLOAT HORIZONTALLY IN THE WINDOW FRAME
-    WHEN BEING RESIZED */
-}
+
 /*specific html & text elements*/
 .meta {
     margin-bottom: 20px;
@@ -58,7 +45,6 @@ svg {
 }
 .body_text {
     margin:auto;
-    min-width:400px;
     width: 60%;
     padding: 10px;
 }
@@ -68,10 +54,9 @@ svg {
   /*background-color: #e5e5e5;*/
 }
 #graph_title{
-    font-family: din-condensed, sans-serif;
     display:block;
     margin-top: 1.5em;
-    font-size: 30px;
+    font-size: 25px;
     line-height: 24px;
     margin-bottom: 3px;
 }
@@ -80,47 +65,27 @@ svg {
     width: 60%;
     text-align:center;
 }
-.datatype {
-    display:inline;
-}
-.pt {
+.ODO {
   fill: #57bec1; /* teal blue */
-  stroke: #ffffff; /* white outline helps discern overlaps better */
-}
-#hover.pt{
-    fill: #57bec1; /* teal blue */
-    stroke: #000000; /* white outline helps discern overlaps better */
-}
-.axisLabel{
-    font-size:14;
+  stroke: #519da0; /*darker teal blue outline */
 }
 
 /*styling for rect and text elements appended to tooltip group*/
 .tooltip rect {
     position: absolute;
     text-align: center;
+    width: 60px;
+    height: 28px;
     padding: 2px;
-    /*font: 12px sans-serif;*/
-    fill: #4d9b9e;
+    font: 12px sans-serif;
+    fill: lightsteelblue;
     border: 0px;
     rx: 8px;
     ry: 8px;
     pointer-events: none;
 }
 .tooltip text {
-    fill: white;
+    font-size: 0.8em;
+    fill: #333333;
     text-anchor:middle;
-}
-
-.button {
-    width:150px;
-    background-color: #57bec1; /* teal blue */
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    margin: 5px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 12px;
 }

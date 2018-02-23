@@ -33,3 +33,16 @@ For a basic tutorial, I highly recommend the introductory tutorials by [Scott Mu
 If you're doing the right thing and running `python3`, starting the server will look more like `python3 -m http.server`.
 Or if you have `node` installed, their `http-server` is more stable under many requests in my experience (but generally, not necessary).
 
+## Instructions for uploading to iSchool Using an FTP client
+(such as FileZilla on Windows or Cyberduck on Mac)
+
+1. Connect to the iSchool via the following credentials:
+    host: ischool.berkeley.edu
+    username: your iSchool username
+    password: your iSchool passwordport: 22
+
+2. Once you’re connected, you’ll see your pre-configured directories. Go into the folder called “public_html.”
+
+3. Upload all files/folders necessary for your webpage in this folder, ensuring that “index.html” is placed just inside “public_html” (i.e. not buried in another folder within “public_html”)
+
+4. After you’re done, your web page is publicly visible at the url: http://people.ischool.berkeley.edu/~your-username/ (be sure to include the “~” before your username.

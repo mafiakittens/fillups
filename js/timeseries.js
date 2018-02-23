@@ -111,7 +111,8 @@ $(function() {
                 d3.select(me).style("background-color", "#57bec1");
             }
             // update data plotted based on which button is clicked
-            d3.select("#data1")
+            // TODO: UPDATE TEXT IN HEADER (DATATYPE DIV) BASED ON DATA GRAPHED
+            d3.select("#data"+1)
                 .html(button_names[0])
                 .on("click", function() {           // when button #1 is clicked
                     plot(1);                        // plot column 1 data from csv
@@ -204,6 +205,8 @@ $(function() {
                     d3.selectAll("path").attr("id", null)
                     // set style to highight this point
                     d3.select(this).attr("id", "hover");
+
+                    //TODO: tooltip not showing up on other views of graph (2-4)
 
                     // two text lines: one for date and one for data value
                     tooltip.select("#tip1")
